@@ -1,0 +1,12 @@
+[
+  {
+    "id": "1745343914248",
+    "title": "Produto FS",
+    "description": "Produto vindo do filesystem",
+    "code": "FS123",
+    "price": 199.99,
+    "stock": 50,
+    "category": "fs",
+    "status": true
+  }
+]
