@@ -1,26 +1,39 @@
-const Product = require('../models/product.model');
+const ProductModel = require("../models/product.model");
 
 class ProductManagerMongo {
-    async getAll(limit) {
-        const products = await Product.find();
-        return limit ? products.slice(0, limit) : products;
+  async getPaginatedProducts({ limit = 10, page = 1, sort, query }) {
+    const options = {
+      limit: parseInt(limit),
+      page: parseInt(page),
+      lean: true,
+    };
+
+    if (sort) {
+      options.sort = { price: sort === "asc" ? 1 : -1 };
     }
 
-    async getById(id) {
-        return await Product.findById(id);
-    }
+    const filter = query
+      ? {
+          $or: [
+            { category: { $regex: query, $options: "i" } },
+            { title: { $regex: query, $options: "i" } },
+          ],
+        }
+      : {};
 
-    async create(data) {
-        return await Product.create(data);
-    }
+    const result = await ProductModel.paginate(filter, options);
 
-    async update(id, data) {
-        return await Product.findByIdAndUpdate(id, data, { new: true });
-    }
-
-    async delete(id) {
-        return await Product.findByIdAndDelete(id);
-    }
+    // Formatando pra usar direto no Handlebars
+    return {
+      payload: result.docs,
+      totalPages: result.totalPages,
+      prevPage: result.prevPage,
+      nextPage: result.nextPage,
+      page: result.page,
+      hasPrevPage: result.hasPrevPage,
+      hasNextPage: result.hasNextPage,
+    };
+  }
 }
 
 module.exports = ProductManagerMongo;

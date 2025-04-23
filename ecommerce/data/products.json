@@ -8,5 +8,35 @@
     "stock": 50,
     "category": "fs",
     "status": true
+  },
+  {
+    "id": "1745374048087"
+  },
+  {
+    "id": "1745374087051"
+  },
+  {
+    "id": "1745374098639"
+  },
+  {
+    "id": "1745374102632"
+  },
+  {
+    "id": "1745374114462",
+    "title": "Mouse Gamer",
+    "description": "Mouse com RGB e 24000 DPI",
+    "code": "MG123",
+    "price": 149.99,
+    "stock": 100,
+    "category": "perifericos"
+  },
+  {
+    "id": "1745375071706",
+    "title": "Teclado Mecânico",
+    "description": "Switch azul, RGB completo",
+    "code": "TK123",
+    "price": 299.99,
+    "stock": 80,
+    "category": "perifericos"
   }
 ]

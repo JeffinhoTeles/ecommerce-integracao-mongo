@@ -11,11 +11,7 @@ if (config.persistence === "MONGO") {
 const router = express.Router();
 const productManager = new ProductService();
 
-router.get("/view", async (req, res) => {
-  const products = await productManager.getAll();
-  res.render("products", { title: "Produtos", products });
-});
-
+// Buscar produto por ID
 router.get("/:pid", async (req, res) => {
   const product = await productManager.getById(req.params.pid);
   if (!product)
@@ -23,11 +19,13 @@ router.get("/:pid", async (req, res) => {
   res.json(product);
 });
 
+// Criar novo produto
 router.post("/", async (req, res) => {
   const product = await productManager.create(req.body);
   res.status(201).json(product);
 });
 
+// Atualizar produto existente
 router.put("/:pid", async (req, res) => {
   const updated = await productManager.update(req.params.pid, req.body);
   if (!updated)
@@ -35,6 +33,7 @@ router.put("/:pid", async (req, res) => {
   res.json(updated);
 });
 
+// Deletar produto
 router.delete("/:pid", async (req, res) => {
   const deleted = await productManager.delete(req.params.pid);
   if (!deleted)

@@ -1,12 +1,35 @@
-<h1>Produtos disponíveis</h1>
+<h1>Lista de Produtos</h1>
+<h1>🛍️ Lista de Produtos</h1>
 
-<ul>
-    {{#each products}}
-        <li>
-            <strong>{{this.title}}</strong> - R$ {{this.price}} <br />
-            <form action="/api/carts/1/product/{{this._id}}" method="POST">
-                <button type="submit">Adicionar ao Carrinho</button>
-            </form>
-        </li>
-    {{/each}}
-</ul>
+<a href="/cart">
+  <button>🛒 Ver Carrinho</button>
+</a>
+
+<div>
+  {{#each payload}}
+    <div>
+      <h3>{{this.title}}</h3>
+      <p>{{this.description}}</p>
+      <p>R$ {{this.price}}</p>
+
+      <form
+        method="POST"
+        action="/api/fs/carts/{{this.cartId}}/product/{{this._id}}"
+      >
+        <button type="submit">Adicionar ao Carrinho</button>
+      </form>
+    </div>
+  {{/each}}
+</div>
+
+<div>
+  {{#if hasPrevPage}}
+    <a href="/products?page={{prevPage}}">⬅️ Página Anterior</a>
+  {{/if}}
+
+  <span style="margin: 0 10px;">Página {{page}} de {{totalPages}}</span>
+
+  {{#if hasNextPage}}
+    <a href="/products?page={{nextPage}}">Próxima Página ➡️</a>
+  {{/if}}
+</div>

@@ -1,4 +1,3 @@
-// src/dao/fs/productManagerFs.js
 const fs = require("fs");
 const path = require("path");
 
