@@ -1,7 +1,7 @@
 # 🛒 Projeto E-commerce com Carrinho - CoderHouse
 
 Sistema de e-commerce desenvolvido como atividade da CoderHouse.  
-A aplicação permite cadastrar e listar produtos, adicionar produtos ao carrinho por sessão, visualizar os itens e finalizar a compra — tudo integrado com MongoDB, Express e Handlebars.
+A aplicação permite cadastrar e listar produtos, adicionar produtos ao carrinho por sessão, visualizar os itens e finalizar a compra — tudo integrado com MongoDB, Express, Handlebars e agora com sistema de login e controle de acesso.
 
 ---
 
@@ -18,7 +18,7 @@ A aplicação permite cadastrar e listar produtos, adicionar produtos ao carrinh
 
 ## 📁 Estrutura
 
-📁 src/ ┣ 📂 dao/ ┃ ┣ 📂 db/ # Lógica de acesso via Mongo ┃ ┣ 📂 fs/ # FileSystem (apenas para testes) ┃ ┗ 📂 models/ # Models do Mongoose ┣ 📂 routes/ # Rotas das APIs e Views ┣ 📂 views/ # Templates Handlebars ┣ 📂 middlewares/ # Sessão e auth ┣ 📄 app.js # App principal ┗ 📄 dbConfig.js # Config de conexão com MongoDB
+📁 src/ ┣ 📂 dao/ ┃ ┣ 📂 db/ # Lógica de acesso via Mongo ┃ ┣ 📂 fs/ # FileSystem (apenas para testes) ┃ ┗ 📂 models/ # Models do Mongoose ┣ 📂 routes/ # Rotas das APIs e Views ┣ 📂 views/ # Templates Handlebars ┣ 📂 middlewares/ # Sessão e autenticação ┣ 📄 app.js # App principal ┗ 📄 dbConfig.js # Config de conexão com MongoDB
 
 yaml
 Copiar
@@ -53,43 +53,68 @@ Copiar
 Editar
 node src/app.js
 🌐 Acessos no Navegador
-📦 Lista de Produtos: http://localhost:8080/products
+🟦 Login: http://localhost:8080/login
+
+🟧 Cadastro: http://localhost:8080/register
+
+📦 Produtos: http://localhost:8080/products
 
 🛒 Carrinho: http://localhost:8080/cart
 
-🧾 Finalizar Compra: Botão dentro da página /cart
+🔐 Sistema de Login (Admin ou Usuário)
+🧪 Admin (hardcoded):
+Email: adminCoder@coder.com
+
+Senha: adminCod3r123
+
+👥 Usuário comum:
+Cadastre-se em /register
+
+Após login, é redirecionado para /products
 
 🧪 Como Testar
-✅ 1. Acesse a lista de produtos
-Vá até: http://localhost:8080/products
+✅ 1. Login
+Acesse /login e entre como admin ou usuário.
+Você será redirecionado para /products.
 
-Você verá os produtos cadastrados (MongoDB)
+✅ 2. Visualização de dados
+Na página de produtos será exibido:
 
-✅ 2. Adicione ao carrinho
-Clique no botão "Adicionar ao Carrinho" em algum produto
+scss
+Copiar
+Editar
+Bem-vindo, Jeffinho (admin)
+ou
 
-✅ 3. Visualize o carrinho
-Clique em "Ver Carrinho" no topo da página de produtos
+scss
+Copiar
+Editar
+Bem-vindo, SeuNome (user)
+botão de Logout
 
-✅ 4. Finalize a compra
-Clique em "Finalizar Compra"
+✅ 3. Proteção de Rotas
+Rotas como /products e /cart exigem autenticação.
+Sem estar logado, você será redirecionado automaticamente para /login.
 
-O sistema irá calcular o total, limpar o carrinho e exibir o valor da compra
+✅ 4. Logout
+Ao clicar em "Logout", sua sessão é encerrada e o acesso às páginas protegidas é bloqueado até novo login.
 
 ✅ Funcionalidades
- Produtos paginados com MongoDB
+ Listagem de produtos (MongoDB)
 
- Carrinho dinâmico por sessão
+ Carrinho por sessão
 
- Adição de produtos ao carrinho
+ Finalização de compra
 
- Visualização de carrinho com populate
+ Registro e login de usuários
 
- Finalização da compra com cálculo de total
+ Controle de acesso com middleware
+
+ Role system (admin vs user)
 
  Histórico de compras (em breve)
 
- Cadastro/login de usuário (em breve)
+ Edição e exclusão de produtos (em breve)
 
 👨‍💻 Autor
 Jeffinho Teles
