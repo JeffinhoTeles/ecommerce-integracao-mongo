@@ -9,6 +9,7 @@ const Handlebars = require("handlebars");
 const connectDB = require("./dbConfig");
 const config = require("./config");
 const cartSession = require("./middlewares/cartSession");
+const authRouter = require("./routes/authRouter");
 
 const productsRouter = require("./routes/productsRouter");
 const chatRouter = require("./routes/chatRouter");
@@ -54,6 +55,7 @@ app.use("/api/fs", fsRouter);
 app.use("/api/products", productsRouter);
 app.use("/chat", chatRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/", authRouter);
 
 // Inicializa servidor
 app.listen(PORT, () => {

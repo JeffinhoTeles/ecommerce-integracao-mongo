@@ -2,20 +2,21 @@ const express = require("express");
 const ProductManagerMongo = require("../dao/db/ProductManagerMongo");
 const CartManagerMongo = require("../dao/db/CartManagerMongo");
 const CartModel = require("../dao/models/cart.model");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 const productManagerMongo = new ProductManagerMongo();
 const cartManager = new CartManagerMongo();
 
-router.get("/products", async (req, res) => {
+// Protege a rota de produtos
+router.get("/products", authMiddleware, async (req, res) => {
   try {
     const data = await productManagerMongo.getPaginatedProducts(req.query);
-
-    console.log("🔁 Enviando para view cartId:", req.session.cartId);
 
     res.render("products", {
       ...(data || {}),
       cartId: req.session.cartId,
+      user: req.session.user,
       payload: (data.payload || []).map((p) => ({
         ...p,
         cartId: req.session.cartId,
@@ -27,7 +28,8 @@ router.get("/products", async (req, res) => {
   }
 });
 
-router.get("/cart", async (req, res) => {
+// Protege a visualização do carrinho
+router.get("/cart", authMiddleware, async (req, res) => {
   try {
     const cartId = req.session.cartId;
     const cart = await cartManager.getCartWithProducts(cartId);
@@ -38,6 +40,7 @@ router.get("/cart", async (req, res) => {
 
     res.render("cart", {
       cart,
+      user: req.session.user,
     });
   } catch (err) {
     console.error("Erro ao carregar o carrinho:", err);
