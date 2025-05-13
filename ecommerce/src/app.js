@@ -1,3 +1,6 @@
+require("dotenv").config();
+require("./config/passport.config"); // carregar estratégias ANTES de usar
+
 const express = require("express");
 const session = require("express-session");
 const exphbs = require("express-handlebars");
@@ -16,8 +19,10 @@ const chatRouter = require("./routes/chatRouter");
 const cartsRouter = require("./routes/cartsRouter");
 const fsRouter = require("./routes/fsRouter");
 const viewsRouter = require("./routes/viewsRouter");
+const passport = require("passport");
 
-const app = express();
+const app = express(); // ✅ TEM QUE VIR ANTES de app.use()
+
 const PORT = 8080;
 
 // Middlewares
@@ -32,6 +37,10 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+// Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Middleware de sessão de carrinho
 app.use(cartSession);

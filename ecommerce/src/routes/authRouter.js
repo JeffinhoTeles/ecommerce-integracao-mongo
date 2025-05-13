@@ -1,60 +1,62 @@
 const express = require("express");
+const passport = require("passport");
 const router = express.Router();
-const UserModel = require("../dao/models/user.model"); // vamos criar esse model já já
 
-// View de login
+// Views
 router.get("/login", (req, res) => {
   res.render("login");
 });
 
-// View de registro
 router.get("/register", (req, res) => {
   res.render("register");
 });
 
-// Processa login
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  // Admin hardcoded
-  if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
-    req.session.user = {
-      name: "Administrador",
-      email,
-      role: "admin",
-    };
-    return res.redirect("/products");
+// Login com passport-local
+router.post(
+  "/login",
+  passport.authenticate("login", {
+    failureRedirect: "/login",
+    failureMessage: true,
+  }),
+  (req, res) => {
+    // Define o role de admin se for o email hardcoded
+    if (req.user.email === "adminCoder@coder.com") {
+      req.user.role = "admin";
+    } else {
+      req.user.role = "user";
+    }
+    res.redirect("/products");
   }
+);
 
-  // Procura usuário comum
-  const user = await UserModel.findOne({ email, password });
-  if (!user) return res.redirect("/login");
+// Registro com passport-local
+router.post(
+  "/register",
+  passport.authenticate("register", {
+    failureRedirect: "/register",
+    failureMessage: true,
+  }),
+  (req, res) => res.redirect("/profile")
+);
 
-  req.session.user = {
-    name: user.name,
-    email: user.email,
-    role: "user",
-  };
+// GitHub OAuth
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user:email"] })
+);
 
-  res.redirect("/products");
-});
-
-// Processa registro
-router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
-  const exists = await UserModel.findOne({ email });
-  if (exists) return res.redirect("/register");
-
-  await UserModel.create({ name, email, password });
-  res.redirect("/login");
-});
+router.get(
+  "/github/callback",
+  passport.authenticate("github", {
+    failureRedirect: "/login",
+    failureMessage: true,
+  }),
+  (req, res) => res.redirect("/profile")
+);
 
 // Logout
 router.get("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    if (err) return res.status(500).send("Erro ao sair");
-    res.redirect("/login");
-  });
+  req.logout(() => res.redirect("/login"));
 });
 
 module.exports = router;

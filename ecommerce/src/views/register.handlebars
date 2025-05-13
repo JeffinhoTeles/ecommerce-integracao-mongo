@@ -1,8 +1,10 @@
-<h2>Cadastro</h2>
+<h2>Registrar</h2>
 <form action="/register" method="POST">
-  <input name="name" type="text" placeholder="Nome" required />
-  <input name="email" type="email" placeholder="Email" required />
-  <input name="password" type="password" placeholder="Senha" required />
-  <button type="submit">Cadastrar</button>
+  <label>Nome:</label><br />
+  <input type="text" name="name" required /><br />
+  <label>Email:</label><br />
+  <input type="email" name="email" required /><br />
+  <label>Senha:</label><br />
+  <input type="password" name="password" required /><br />
+  <button type="submit">Registrar</button>
 </form>
-<a href="/login">Já tem conta? Login</a>

@@ -75,4 +75,15 @@ router.post("/cart/purchase", async (req, res) => {
   }
 });
 
+// Perfil do usuário logado
+router.get("/profile", authMiddleware, (req, res) => {
+  const user = req.session.user || req.user;
+  if (!user) return res.redirect("/login");
+
+  res.render("profile", {
+    title: "Perfil do Usuário",
+    user,
+  });
+});
+
 module.exports = router;
