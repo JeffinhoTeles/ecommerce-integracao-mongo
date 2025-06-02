@@ -2,7 +2,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
 const bcrypt = require("bcrypt");
-const User = require("../dao/models/user.model");
+const User = require("../models/user.model");
 
 // Estratégia de login local
 passport.use(

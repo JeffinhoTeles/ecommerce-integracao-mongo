@@ -1,4 +1,4 @@
-const ProductModel = require("../models/product.model");
+const ProductModel = require("../../models/product.model");
 
 class ProductManagerMongo {
   async getPaginatedProducts({ limit = 10, page = 1, sort, query }) {

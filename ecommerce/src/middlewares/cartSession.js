@@ -1,4 +1,4 @@
-const CartModel = require("../dao/models/cart.model");
+const CartModel = require("../models/cart.model");
 
 async function cartSession(req, res, next) {
   if (!req.session.cartId) {
