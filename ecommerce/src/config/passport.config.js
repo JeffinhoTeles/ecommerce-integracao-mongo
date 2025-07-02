@@ -4,19 +4,34 @@ const GitHubStrategy = require("passport-github2").Strategy;
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 
+const CustomError = require("../errors/CustomError");
+const ErrorTypes = require("../errors/ErrorTypes");
+
 // Estratégia de login local
 passport.use(
   "login",
   new LocalStrategy(
-    {
-      usernameField: "email",
-    },
+    { usernameField: "email" },
     async (email, password, done) => {
       try {
         const user = await User.findOne({ email });
-        if (!user || !bcrypt.compareSync(password, user.password)) {
-          return done(null, false);
+        if (!user) {
+          return done(
+            new CustomError(
+              ErrorTypes.AUTH_ERROR,
+              "Usuário não encontrado",
+              401
+            )
+          );
         }
+
+        const isValid = bcrypt.compareSync(password, user.password);
+        if (!isValid) {
+          return done(
+            new CustomError(ErrorTypes.AUTH_ERROR, "Senha incorreta", 401)
+          );
+        }
+
         return done(null, user);
       } catch (err) {
         return done(err);
@@ -29,14 +44,15 @@ passport.use(
 passport.use(
   "register",
   new LocalStrategy(
-    {
-      passReqToCallback: true,
-      usernameField: "email",
-    },
+    { passReqToCallback: true, usernameField: "email" },
     async (req, email, password, done) => {
       try {
         const exists = await User.findOne({ email });
-        if (exists) return done(null, false);
+        if (exists) {
+          return done(
+            new CustomError(ErrorTypes.AUTH_ERROR, "Usuário já cadastrado", 409)
+          );
+        }
 
         const hashed = bcrypt.hashSync(password, 10);
         const user = await User.create({
@@ -61,7 +77,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL: "http://localhost:8080/github/callback",
-        scope: ["user:email"], // necessário para capturar o e-mail mesmo que privado
+        scope: ["user:email"],
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -73,7 +89,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
             user = await User.create({
               name: profile.displayName || profile.username,
               email,
-              password: "", // login via GitHub não precisa de senha
+              password: "", // GitHub não exige senha
             });
           }
 
@@ -96,6 +112,13 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
+
+    if (user.email === "adminCoder@coder.com") {
+      user.role = "admin";
+    } else {
+      user.role = "user";
+    }
+
     done(null, user);
   } catch (err) {
     done(err);

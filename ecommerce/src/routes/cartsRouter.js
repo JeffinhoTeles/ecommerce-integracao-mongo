@@ -1,6 +1,7 @@
 const express = require("express");
 const CartManager = require("../dao/db/CartManagerMongo");
 const router = express.Router();
+const cartController = require("../controllers/cart.controller");
 
 const cartManager = new CartManager();
 
@@ -27,5 +28,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
     return res.status(404).json({ error: "Carrinho não encontrado" });
   res.json(updatedCart);
 });
+const authMiddleware = require("../middlewares/authMiddleware");
+router.post("/:cid/purchase", authMiddleware, cartController.purchaseCart);
 
 module.exports = router;

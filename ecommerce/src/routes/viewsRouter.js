@@ -3,6 +3,7 @@ const ProductManagerMongo = require("../dao/db/ProductManagerMongo");
 const CartManagerMongo = require("../dao/db/CartManagerMongo");
 const CartModel = require("../models/cart.model");
 const authMiddleware = require("../middlewares/authMiddleware");
+const roleMiddleware = require("../middlewares/roleMiddleware");
 
 const router = express.Router();
 const productManagerMongo = new ProductManagerMongo();
@@ -84,6 +85,10 @@ router.get("/profile", authMiddleware, (req, res) => {
     title: "Perfil do Usuário",
     user,
   });
+});
+
+router.get("/ticket", authMiddleware, roleMiddleware("admin"), (req, res) => {
+  res.render("ticket");
 });
 
 module.exports = router;
