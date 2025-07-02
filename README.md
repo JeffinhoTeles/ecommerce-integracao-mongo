@@ -1,7 +1,7 @@
 # 🛒 Projeto E-commerce com Carrinho - CoderHouse
 
 Sistema de e-commerce desenvolvido como atividade da CoderHouse.  
-A aplicação permite cadastrar e listar produtos, adicionar produtos ao carrinho por sessão, visualizar os itens e finalizar a compra — tudo integrado com MongoDB, Express, Handlebars e agora com sistema de login e controle de acesso.
+A aplicação permite cadastrar e listar produtos, adicionar ao carrinho por sessão, finalizar a compra com verificação de estoque e geração de ticket. Possui autenticação local e via GitHub, logger com Winston, controle por roles e tratamento de erros customizado.
 
 ---
 
@@ -11,111 +11,188 @@ A aplicação permite cadastrar e listar produtos, adicionar produtos ao carrinh
 - Express
 - MongoDB + Mongoose
 - Handlebars
+- Passport.js (local + GitHub)
 - Express-session
+- Winston
 - dotenv
 
 ---
 
-## 📁 Estrutura
+## 📁 Estrutura de Pastas
 
-📁 src/ ┣ 📂 dao/ ┃ ┣ 📂 db/ # Lógica de acesso via Mongo ┃ ┣ 📂 fs/ # FileSystem (apenas para testes) ┃ ┗ 📂 models/ # Models do Mongoose ┣ 📂 routes/ # Rotas das APIs e Views ┣ 📂 views/ # Templates Handlebars ┣ 📂 middlewares/ # Sessão e autenticação ┣ 📄 app.js # App principal ┗ 📄 dbConfig.js # Config de conexão com MongoDB
-
-yaml
-Copiar
-Editar
+```
+📁 src/
+┣ 📂 config/              # Configurações gerais e de logger
+┣ 📂 dao/                 # DAO + persistência (MongoDB / FS)
+┃ ┣ 📂 db/                 # MongoDB managers
+┃ ┣ 📂 fs/                 # FileSystem managers
+┃ ┗ 📂 models/             # Models do Mongoose
+┣ 📂 controllers/         # Controladores das rotas
+┣ 📂 services/            # Lógica de negócios
+┣ 📂 middlewares/         # Autenticação, logger e tratamento de erro
+┣ 📂 routes/              # Rotas (API, views, logger)
+┣ 📂 views/               # Templates Handlebars
+┣ 📂 dtos/                # DTOs para resposta segura
+┣ 📄 app.js               # App principal
+┗ 📄 dbConfig.js          # Conexão MongoDB
+```
 
 ---
 
 ## ⚙️ Configuração do Ambiente
 
-Crie um arquivo `.env` na raiz com sua URI do MongoDB Atlas:
+Crie um arquivo `.env` com as credenciais:
 
 ```env
-MONGO_URI=mongodb+srv://usuario:senha@cluster.mongodb.net/ecommerce?retryWrites=true&w=majority
-▶️ Como Rodar o Projeto
-Clone o projeto
-
-bash
-Copiar
-Editar
-git clone https://github.com/seuusuario/seurepositorio.git
-cd seurepositorio
-Instale as dependências
-
-bash
-Copiar
-Editar
-npm install
-Rode o servidor
-
-bash
-Copiar
-Editar
-node src/app.js
-🌐 Acessos no Navegador
-🟦 Login: http://localhost:8080/login
-
-🟧 Cadastro: http://localhost:8080/register
-
-📦 Produtos: http://localhost:8080/products
-
-🛒 Carrinho: http://localhost:8080/cart
-
-🔐 Sistema de Login (Admin ou Usuário)
-🧪 Admin (hardcoded):
-Email: adminCoder@coder.com
-
-Senha: adminCod3r123
-
-👥 Usuário comum:
-Cadastre-se em /register
-
-Após login, é redirecionado para /products
-
-🧪 Como Testar
-✅ 1. Login
-Acesse /login e entre como admin ou usuário.
-Você será redirecionado para /products.
-
-✅ 2. Visualização de dados
-Na página de produtos será exibido:
-
-scss
-Copiar
-Editar
-Bem-vindo, Jeffinho (admin)
-ou
-
-scss
-Copiar
-Editar
-Bem-vindo, SeuNome (user)
-botão de Logout
-
-✅ 3. Proteção de Rotas
-Rotas como /products e /cart exigem autenticação.
-Sem estar logado, você será redirecionado automaticamente para /login.
-
-✅ 4. Logout
-Ao clicar em "Logout", sua sessão é encerrada e o acesso às páginas protegidas é bloqueado até novo login.
-
-✅ Funcionalidades
- Listagem de produtos (MongoDB)
-
- Carrinho por sessão
-
- Finalização de compra
-
- Registro e login de usuários
-
- Controle de acesso com middleware
-
- Role system (admin vs user)
-
- Histórico de compras (em breve)
-
- Edição e exclusão de produtos (em breve)
-
-👨‍💻 Autor
-Jeffinho Teles
+MONGO_URI=mongodb+srv://usuario:senha@cluster.mongodb.net/ecommerce
+GITHUB_CLIENT_ID=xxxxxx
+GITHUB_CLIENT_SECRET=xxxxxx
 ```
+
+---
+
+## ▶️ Como Rodar o Projeto
+
+```bash
+npm install
+npm start
+```
+
+---
+
+## 🌐 Acessos no Navegador
+
+- 🟦 Login: [http://localhost:8080/login](http://localhost:8080/login)
+- 🟧 Cadastro: [http://localhost:8080/register](http://localhost:8080/register)
+- 📦 Produtos: [http://localhost:8080/products](http://localhost:8080/products)
+- 🛒 Carrinho: [http://localhost:8080/cart](http://localhost:8080/cart)
+
+---
+
+## 🔐 Login e Controle de Acesso
+
+### Admin:
+
+```
+Email: adminCoder@coder.com
+Senha: adminCod3r123
+```
+
+### Usuário:
+
+Cadastre-se em `/register`. Após login, será redirecionado para `/products`.
+
+### Login via GitHub:
+
+Acesse `/github` e autorize seu GitHub.
+
+---
+
+## ✅ Funcionalidades
+
+- ✅ Listagem de produtos (Mongo ou FS)
+- ✅ Adição ao carrinho por sessão
+- ✅ Registro, login local e via GitHub
+- ✅ Compra com verificação de estoque
+- ✅ Geração de ticket único por compra
+- ✅ Controle de acesso com `roleMiddleware`
+- ✅ Middleware de erros customizados
+- ✅ DTO de usuário para esconder senha
+- ✅ Logger com Winston + logs salvos em arquivos
+- ✅ Rota de teste de logger (`/loggerTest`)
+
+---
+
+## 🧾 Geração de Tickets
+
+Após finalizar uma compra válida:
+
+- Gera ticket com:
+  - Código único
+  - Valor total
+  - Email do comprador
+  - Timestamp
+
+---
+
+## 📋 DTO de Usuário
+
+Evita exposição de dados sensíveis como senha no retorno da API.  
+Formato da resposta com DTO:
+
+```json
+{
+  "name": "Jeffinho Teles",
+  "email": "user@email.com",
+  "role": "user"
+}
+```
+
+---
+
+## 🐞 Tratamento de Erros
+
+Middleware `errorHandler` lida com erros lançados no sistema:
+
+- Classe `CustomError`
+- Enum `ErrorTypes`
+- Exemplo de resposta:
+
+```json
+{
+  "error": "INVALID_PARAM",
+  "message": "Produto não encontrado"
+}
+```
+
+---
+
+## 📓 Logger com Winston
+
+### Logs salvos em:
+
+- `/logs/errors.log` → erros
+- `/logs/combined.log` → todos os logs
+
+### Rota de Teste
+
+```http
+GET /loggerTest
+```
+
+Exibe logs em diferentes níveis: `debug`, `info`, `warn`, `error`, etc.
+
+---
+
+## 🧪 Testes
+
+### Postman
+
+- `GET /api/products`
+- `POST /api/products`
+- `PUT /api/products/:pid`
+- `DELETE /api/products/:pid`
+- `POST /api/carts/:cid/purchase`
+- `POST /api/tickets`
+- `GET /loggerTest`
+
+### Segurança
+
+- Rotas protegidas com autenticação e role
+- Admin pode acessar rotas específicas
+
+---
+
+## 🧠 Próximas Funcionalidades
+
+- Painel Admin com CRUD visual
+- Histórico de compras do usuário
+- Visualização de tickets na interface
+- Upload de imagens de produtos
+
+---
+
+## 👨‍💻 Autor
+
+Jeffinho Teles  
+Projeto realizado como parte do curso da [CoderHouse](https://www.coderhouse.com.br/)
