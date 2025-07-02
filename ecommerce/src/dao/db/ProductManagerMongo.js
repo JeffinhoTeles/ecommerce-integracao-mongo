@@ -1,6 +1,26 @@
 const ProductModel = require("../../models/product.model");
 
 class ProductManagerMongo {
+  async getAll() {
+    return ProductModel.find().lean();
+  }
+
+  async getById(id) {
+    return ProductModel.findById(id).lean();
+  }
+
+  async create(data) {
+    return ProductModel.create(data);
+  }
+
+  async update(id, data) {
+    return ProductModel.findByIdAndUpdate(id, data, { new: true }).lean();
+  }
+
+  async delete(id) {
+    const deleted = await ProductModel.findByIdAndDelete(id);
+    return deleted ? true : null;
+  }
   async getPaginatedProducts({ limit = 10, page = 1, sort, query }) {
     const options = {
       limit: parseInt(limit),
@@ -23,7 +43,6 @@ class ProductManagerMongo {
 
     const result = await ProductModel.paginate(filter, options);
 
-    // Formatando pra usar direto no Handlebars
     return {
       payload: result.docs,
       totalPages: result.totalPages,
