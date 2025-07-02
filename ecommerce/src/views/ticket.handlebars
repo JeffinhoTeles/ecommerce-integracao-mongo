@@ -1,0 +1,21 @@
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gerar Ticket</title>
+  </head>
+  <body>
+    <h2>🧾 Testar Geração de Ticket</h2>
+    <button id="gerar">Gerar ticket (amount: 350)</button>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('gerar').addEventListener('click', async
+      function() { try { const res = await fetch('/api/tickets/purchase', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body:
+      JSON.stringify({ amount: 350 }), credentials: 'include' }); const data =
+      await res.json(); alert('✅ Ticket criado:\\n' + JSON.stringify(data,
+      null, 2)); console.log('Ticket criado:', data); } catch (err) { alert('❌
+      Erro ao criar ticket'); console.error(err); } }); });
+    </script>
+  </body>
+</html>
