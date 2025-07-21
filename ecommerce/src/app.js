@@ -29,6 +29,8 @@ const viewsRouter = require("./routes/viewsRouter");
 const ticketsRouter = require("./routes/ticketsRouter");
 const usersRouter = require("./routes/usersRouter");
 const loggerRouter = require("./routes/loggerRouter");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("../src/config/swaggerConfig");
 
 const app = express();
 const PORT = 8080;
@@ -83,6 +85,7 @@ app.use("/", authRouter);
 app.use("/api/tickets", ticketsRouter);
 app.use("/api/users", usersRouter);
 app.use("/", loggerRouter); // rota de teste para logs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Middleware de tratamento de erro
 app.use(errorHandler);

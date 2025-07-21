@@ -2,14 +2,73 @@ const express = require("express");
 
 // Força uso do Mongo (já que não tem config/index.js)
 const ProductManagerMongo = require("../dao/db/ProductManagerMongo");
-// ou
-// const ProductManagerFs = require("../dao/fs/ProductManagerFs");
-
 const CustomError = require("../errors/CustomError");
 const ErrorTypes = require("../errors/ErrorTypes");
 
 const router = express.Router();
-const productManager = new ProductManagerMongo(); // ou new ProductManagerFs()
+const productManager = new ProductManagerMongo();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Produtos
+ *   description: Rotas para gerenciamento de produtos
+ */
+
+/**
+ * @swagger
+ * /api/products:
+ *   get:
+ *     summary: Lista todos os produtos
+ *     tags: [Produtos]
+ *     responses:
+ *       200:
+ *         description: Lista de produtos
+ */
+router.get("/", async (req, res, next) => {
+  try {
+    const products = await productManager.getAll();
+    res.json(products);
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * @swagger
+ * /api/products:
+ *   post:
+ *     summary: Cria um novo produto
+ *     tags: [Produtos]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               code:
+ *                 type: string
+ *               stock:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: Produto criado
+ */
+router.post("/", async (req, res, next) => {
+  try {
+    const product = await productManager.create(req.body);
+    res.status(201).json(product);
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Buscar produto por ID
 router.get("/:pid", async (req, res, next) => {
@@ -23,16 +82,6 @@ router.get("/:pid", async (req, res, next) => {
       );
     }
     res.json(product);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Criar novo produto
-router.post("/", async (req, res, next) => {
-  try {
-    const product = await productManager.create(req.body);
-    res.status(201).json(product);
   } catch (error) {
     next(error);
   }
